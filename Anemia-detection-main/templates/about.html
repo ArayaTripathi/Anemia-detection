@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About System | Anemia Detection</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .about-header {
+      background: linear-gradient(135deg, #0d6efd 0%, #1e3a8a 100%);
+      color: white;
+      padding: 50px 20px;
+      border-radius: 16px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+    .info-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <div>
+          <span class="brand-title">Anemia Detection System</span>
+          <span class="brand-subtitle">AI-Assisted Microscopic Morphology & CBC Profiling</span>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav gap-2">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-cpu"></i> Diagnosis</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('home') }}"><i class="bi bi-info-circle"></i> Disease Guide</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active fw-semibold" href="{{ url_for('about') }}"><i class="bi bi-journal-text"></i> About System</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="container my-4 flex-grow-1">
+    <div class="about-header">
+      <h1 class="display-6 fw-bold mb-2">About The Anemia Detection System</h1>
+      <p class="lead mb-0 mx-auto" style="max-width: 750px; opacity: 0.95;">
+        Automated multi-class diagnosis of anemia from peripheral blood smear images and complete blood count parameters using deep transfer learning.
+      </p>
+    </div>
+
+    <!-- System Architecture Section -->
+    <div class="card border rounded-4 p-4 shadow-sm mb-4">
+      <h4 class="fw-bold text-dark mb-3"><i class="bi bi-diagram-3-fill text-primary me-2"></i> System Architecture & Pipeline</h4>
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="p-3 bg-light rounded-3 h-100 border">
+            <div class="fw-bold text-primary mb-1">1. Image Acquisition</div>
+            <p class="small text-muted mb-0">Microscopic peripheral blood smear images taken under 100x oil immersion magnification.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3 bg-light rounded-3 h-100 border">
+            <div class="fw-bold text-primary mb-1">2. Preprocessing</div>
+            <p class="small text-muted mb-0">Normalization, RGB conversion, and bilinear resizing to 224x224x3 input dimensions.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3 bg-light rounded-3 h-100 border">
+            <div class="fw-bold text-primary mb-1">3. Deep Feature Extraction</div>
+            <p class="small text-muted mb-0">Trained VGG16 backbone (<code>M_Anemia.h5</code>) with dense classification head for 5-class categorization.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3 bg-light rounded-3 h-100 border">
+            <div class="fw-bold text-primary mb-1">4. CBC Corroboration & PDF</div>
+            <p class="small text-muted mb-0">Cross-validation against clinical CBC indices and automated generation of PDF laboratory reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagnostic Capabilities -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="info-card">
+          <h5 class="fw-bold text-dark mb-2"><i class="bi bi-shield-check text-success me-2"></i> Clinical Purpose</h5>
+          <p class="small text-muted mb-0">
+            Designed to assist laboratory professionals and medical practitioners in triaging peripheral blood smear samples, expediting diagnosis for iron deficiency, sickle cell disease, thalassemia, megaloblastic anemia, and dimorphic presentations.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-card">
+          <h5 class="fw-bold text-dark mb-2"><i class="bi bi-file-earmark-medical text-primary me-2"></i> Automated Reporting</h5>
+          <p class="small text-muted mb-0">
+            Generates standardized, downloadable hematology PDF reports detailing primary classification, multi-class confidence distribution, and morphological evaluation markers for clinical correlation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Clean Footer without branding/model text -->
+  <footer class="py-3 mt-auto">
+    <div class="container d-flex justify-content-end gap-3 text-muted small">
+      <a href="{{ url_for('index') }}" class="text-decoration-none text-primary fw-semibold">Diagnosis</a>
+      <a href="{{ url_for('home') }}" class="text-decoration-none text-muted">Disease Guide</a>
+      <a href="{{ url_for('about') }}" class="text-decoration-none text-muted">About System</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

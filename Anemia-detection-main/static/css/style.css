@@ -1,0 +1,336 @@
+/* Anemia Detection Medical Dashboard Stylesheet */
+:root {
+  --primary-color: #0d6efd;
+  --primary-dark: #0a58ca;
+  --primary-light: #e7f1ff;
+  --secondary-color: #475569;
+  --success-color: #198754;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --info-color: #0dcaf0;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar-custom {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.navbar-brand img {
+  height: 42px;
+  width: auto;
+  margin-right: 12px;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+/* Card container */
+.main-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+
+/* Nav Tabs */
+.nav-tabs-custom {
+  border-bottom: 1px solid var(--border-color);
+  background: #f8fafc;
+  padding: 8px 16px 0;
+}
+
+.nav-tabs-custom .nav-link {
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.nav-tabs-custom .nav-link.active {
+  color: var(--primary-color);
+  background: transparent;
+  border-bottom-color: var(--primary-color);
+}
+
+.nav-tabs-custom .nav-link:hover:not(.active) {
+  color: var(--text-main);
+  border-bottom-color: #cbd5e1;
+}
+
+/* Section Header */
+.section-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+
+/* Dropzone for Upload */
+.dropzone-container {
+  border: 2px dashed #94a3b8;
+  border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.dropzone-container:hover, .dropzone-container.dragover {
+  border-color: var(--primary-color);
+  background-color: var(--primary-light);
+}
+
+.dropzone-icon {
+  font-size: 3rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.dropzone-container:hover .dropzone-icon {
+  color: var(--primary-color);
+}
+
+.dropzone-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Image preview container */
+.image-preview-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.image-preview-wrapper img {
+  max-height: 250px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.btn-remove-preview {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-remove-preview:hover {
+  background: #b02a37;
+}
+
+/* Sample image pills */
+.sample-pill {
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.sample-pill:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-dark);
+}
+
+.sample-pill img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* Guidelines */
+.guideline-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.guideline-list li {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guideline-list li i {
+  color: var(--success-color);
+}
+
+/* Results Display */
+.result-header-card {
+  border-radius: 12px;
+  padding: 20px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.diagnosis-badge {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.confidence-chip {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Probability Bars */
+.prob-row {
+  margin-bottom: 12px;
+}
+
+.prob-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.prob-progress {
+  height: 10px;
+  border-radius: 5px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+}
+
+.prob-bar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.6s ease;
+}
+
+/* Clinical Info Cards */
+.clinical-card {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  height: 100%;
+}
+
+.clinical-card h6 {
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #ffffff;
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #ffffff;
+  margin-top: 20px;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+}

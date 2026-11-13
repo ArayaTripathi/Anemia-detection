@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disease Guide | Anemia Detection System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .hero-banner {
+      background: linear-gradient(135deg, #0d6efd 0%, #1e3a8a 100%);
+      color: white;
+      padding: 60px 20px;
+      border-radius: 16px;
+      margin-bottom: 40px;
+    }
+
+    .condition-card {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 24px;
+      height: 100%;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .condition-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="PathLabs Logo">
+        <div>
+          <span class="brand-title">Anemia Detection System</span>
+          <span class="brand-subtitle">AI-Assisted Microscopic Morphology & CBC Profiling</span>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav gap-2">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-cpu"></i> Diagnosis</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active fw-semibold" href="{{ url_for('home') }}"><i class="bi bi-info-circle"></i>
+              Disease Guide</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('about') }}"><i class="bi bi-journal-text"></i> About System</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="container my-4 flex-grow-1">
+    <div class="hero-banner text-center">
+      <h1 class="display-5 fw-bold mb-3">Multi-Class Anemia Classification Guide</h1>
+      <p class="lead mb-4 mx-auto" style="max-width: 800px;">
+        Explore the 5 distinct categories of anemia classified by our deep neural network (VGG16), integrating
+        peripheral blood smear morphology with Complete Blood Count (CBC) analysis.
+      </p>
+      <a href="{{ url_for('index') }}" class="btn btn-light btn-lg fw-bold text-primary px-4 shadow-sm">
+        <i class="bi bi-play-circle-fill me-2"></i> Start Image-Based Diagnosis
+      </a>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="condition-card">
+          <div class="fs-2 text-danger mb-2"><i class="bi bi-droplet-half"></i></div>
+          <h5 class="fw-bold text-dark">Iron Deficiency Anemia (IDA)</h5>
+          <span class="badge bg-danger-subtle text-danger mb-3">Microcytic Hypochromic</span>
+          <p class="small text-muted mb-2">
+            The most prevalent anemia globally, caused by depleted iron stores. Red blood cells display reduced
+            hemoglobin content, expanded central pallor, and reduced MCV (< 80 fL). </p>
+              <div class="small fw-semibold text-secondary">Key Smear Markers:</div>
+              <div class="small text-muted">Microcytes, hypochromasia, pencil/cigar cells, anisocytosis.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="condition-card">
+          <div class="fs-2 text-primary mb-2"><i class="bi bi-capsule"></i></div>
+          <h5 class="fw-bold text-dark">Vitamin B12 Deficiency</h5>
+          <span class="badge bg-primary-subtle text-primary mb-3">Macrocytic Megaloblastic</span>
+          <p class="small text-muted mb-2">
+            Impaired erythrocyte maturation due to defective DNA synthesis. Marked by abnormally large erythrocytes (MCV
+            > 100 fL) and hypersegmented neutrophils.
+          </p>
+          <div class="small fw-semibold text-secondary">Key Smear Markers:</div>
+          <div class="small text-muted">Oval macrocytes, hypersegmented polymorphs (≥5 lobes), Howell-Jolly bodies.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="condition-card">
+          <div class="fs-2 text-warning mb-2"><i class="bi bi-moon"></i></div>
+          <h5 class="fw-bold text-dark">Sickle Cell Anemia (SCA)</h5>
+          <span class="badge bg-warning-subtle text-dark mb-3">Hemoglobinopathy (HbS)</span>
+          <p class="small text-muted mb-2">
+            A hereditary disorder where point mutation in the beta-globin chain causes hemoglobin S polymerization,
+            deforming cells into rigid crescent or sickle shapes.
+          </p>
+          <div class="small fw-semibold text-secondary">Key Smear Markers:</div>
+          <div class="small text-muted">Sickle cells (drepanocytes), target cells, boat-shaped cells, polychromasia.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="condition-card">
+          <div class="fs-2 text-info mb-2"><i class="bi bi-diagram-3"></i></div>
+          <h5 class="fw-bold text-dark">Thalassemia</h5>
+          <span class="badge bg-info-subtle text-dark mb-3">Genetic Hemoglobin Defect</span>
+          <p class="small text-muted mb-2">
+            Genetic reduction in alpha or beta globin synthesis. Characterized by disproportionately severe microcytosis
+            relative to high RBC count (Mentzer Index < 13). </p>
+              <div class="small fw-semibold text-secondary">Key Smear Markers:</div>
+              <div class="small text-muted">Target cells (codocytes), marked microcytosis, basophilic stippling,
+                teardrop cells.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="condition-card">
+          <div class="fs-2 text-success mb-2"><i class="bi bi-layers"></i></div>
+          <h5 class="fw-bold text-dark">Dimorphic Anemia</h5>
+          <span class="badge bg-success-subtle text-success mb-3">Dual Erythrocyte Population</span>
+          <p class="small text-muted mb-2">
+            Simultaneous coexistence of two distinct populations of red blood cells. Most commonly observed in combined
+            iron and B12/folate deficiencies or post-transfusion.
+          </p>
+          <div class="small fw-semibold text-secondary">Key Smear Markers:</div>
+          <div class="small text-muted">Two distinct RBC populations: hypochromic microcytes and normo/macrocytes.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="condition-card bg-light border-primary d-flex flex-column justify-content-center text-center">
+          <i class="bi bi-cpu-fill text-primary display-5 mb-3"></i>
+          <h5 class="fw-bold text-primary">Ready to Test Smear Images?</h5>
+          <p class="small text-muted mb-3">Upload patient smear images or use our built-in sample library to generate
+            instant predictions and PDF reports.</p>
+          <a href="{{ url_for('index') }}" class="btn btn-primary fw-semibold">Go to Diagnosis</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-3 mt-auto">
+    <div class="container d-flex justify-content-end gap-3 text-muted small">
+      <a href="{{ url_for('index') }}" class="text-decoration-none text-primary fw-semibold">Diagnosis</a>
+      <a href="{{ url_for('home') }}" class="text-decoration-none text-muted">Disease Guide</a>
+      <a href="{{ url_for('about') }}" class="text-decoration-none text-muted">About System</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
