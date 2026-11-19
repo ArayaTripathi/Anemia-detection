@@ -18,8 +18,8 @@ CLASSES = [
 # - Iron Deficiency Anemia & Vitamin B12 Deficiency mapped to their respective classes
 # - Sickle Cell Anemia unchanged
 SWAP_CLASS_MAP = {
-    'Dimorphic Anemia': 'Thalassemia',
-    'Thalassemia': 'Dimorphic Anemia',
+    'Dimorphic Anemia': 'Dimorphic Anemia',
+    'Thalassemia': 'Thalassemia',
     'Iron Deficiency Anemia': 'Iron Deficiency Anemia',
     'Vitamin B12 Deficiency': 'Vitamin B12 Deficiency',
     'Vitamin B12 Deficiency (Megaloblastic)': 'Vitamin B12 Deficiency',
