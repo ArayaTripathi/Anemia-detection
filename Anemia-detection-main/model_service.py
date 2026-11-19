@@ -237,7 +237,38 @@ def predict_anemia_sample(img_path_or_pil, hemoglobin=None, mcv=None, rbc_count=
     tensor = preprocess_image_tensor(img_path_or_pil)
 
     with torch.no_grad():
-        probs = model(tensor).numpy()[0]
+        probs = model(tensor).numpy()[0].astype(np.float64)
+
+    # Fuse CBC clinical indicators with CNN probabilities
+    # Indices: 0=Dimorphic, 1=IDA, 2=Sickle Cell, 3=Thalassemia, 4=Vitamin B12
+    weights = np.ones(len(CLASSES), dtype=np.float64)
+    try:
+        mcv_val = float(mcv) if mcv is not None and str(mcv).strip() else None
+        rbc_val = float(rbc_count) if rbc_count is not None and str(rbc_count).strip() else None
+
+        if mcv_val is not None:
+            if mcv_val < 80.0:  # Microcytic
+                weights[4] *= 0.02  # Suppress macrocytic B12
+                if rbc_val is not None and rbc_val > 5.0 and mcv_val < 75.0:
+                    weights[3] *= 3.0  # Thalassemia pattern (high RBC, low MCV)
+                    weights[1] *= 1.2
+                else:
+                    weights[1] *= 3.0  # Iron Deficiency Anemia
+                    weights[3] *= 1.2
+            elif mcv_val > 100.0:  # Macrocytic
+                weights[4] *= 4.0   # Vitamin B12 Deficiency
+                weights[1] *= 0.05  # Suppress microcytic IDA
+                weights[3] *= 0.05  # Suppress microcytic Thalassemia
+            else:  # Normocytic (80 - 100 fL)
+                weights[4] *= 0.05  # Suppress macrocytic B12
+                if rbc_val is not None and rbc_val < 3.5:
+                    weights[2] *= 3.0  # Sickle Cell (hemolytic low RBC)
+                weights[0] *= 1.5      # Dimorphic
+    except (ValueError, TypeError):
+        pass
+
+    adjusted = (probs + 0.05) * weights
+    probs = adjusted / np.sum(adjusted)
 
     top_idx = int(np.argmax(probs))
     internal_class = CLASSES[top_idx]
