@@ -212,8 +212,7 @@
                     <i class="bi bi-cloud-arrow-up dropzone-icon"></i>
                     <h6 class="fw-bold mb-1">Drag & Drop Blood Smear Image Here</h6>
                     <p class="text-muted small mb-2">or click to browse from your computer</p>
-                    <span class="badge bg-secondary-subtle text-secondary px-3 py-1">Supports PNG, JPG, JPEG, TIFF
-                      (224x224 input)</span>
+                    <span class="badge bg-secondary-subtle text-secondary px-3 py-1">Supports PNG, JPG, JPEG, TIFF</span>
                   </div>
 
                   <div id="previewContainer" class="d-none">
@@ -237,8 +236,7 @@
                       smears.</li>
                     <li><i class="bi bi-check-circle-fill"></i> Clear monolayer field of red blood cells without cell
                       clumping.</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Images are automatically preprocessed, resized to
-                      224x224, and normalized.</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Images are analyzed via Roboflow Hosted Inference API.</li>
                   </ul>
                 </div>
 
@@ -307,8 +305,8 @@
                   {% endif %}
                 </div>
                 <div class="card-footer bg-light py-2 px-3 small text-muted d-flex justify-content-between">
-                  <span>Input: 224x224 RGB</span>
-                  <span>Model: VGG16 (M_Anemia.h5)</span>
+                  <span>Input: Blood Smear Image{% if total_detections %} ({{ total_detections }} Detections){% endif %}</span>
+                  <span>Model: Roboflow (tri-blood-iw3al/2)</span>
                 </div>
               </div>
             </div>

@@ -3,14 +3,16 @@ from datetime import datetime
 from fpdf import FPDF
 
 # Ensure reports directory exists
-REPORTS_DIR = "reports"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORTS_DIR, exist_ok=True)
 
 class AnemiaReportPDF(FPDF):
     def header(self):
         # Logo if available
-        if os.path.exists('static/logo.png'):
-            self.image('static/logo.png', x=14, y=10, w=30)
+        logo_path = os.path.join(BASE_DIR, 'static', 'logo.png')
+        if os.path.exists(logo_path):
+            self.image(logo_path, x=14, y=10, w=30)
             self.set_xy(48, 12)
         else:
             self.set_xy(14, 12)
@@ -20,7 +22,7 @@ class AnemiaReportPDF(FPDF):
         self.set_text_color(24, 43, 73)
         self.cell(0, 8, 'ANEMIA DETECTION REPORT', ln=True)
         
-        if os.path.exists('static/logo.png'):
+        if os.path.exists(logo_path):
             self.set_xy(48, 20)
         else:
             self.set_xy(14, 20)

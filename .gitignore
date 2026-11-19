@@ -1,0 +1,39 @@
+# Environment & Secrets
+.env
+.env.local
+*.env
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Model Files (Obsolete local weights)
+*.h5
+*.hdf5
+
+# Uploads & Reports
+reports/*.pdf
+uploads/*
+!uploads/.gitkeep
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Cache directories
+.keras/
+.matplotlib/
+
+
+*.corrupted

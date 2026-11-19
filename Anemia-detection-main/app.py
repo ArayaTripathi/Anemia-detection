@@ -4,13 +4,21 @@ from flask import Flask, request, render_template, jsonify, send_file, send_from
 from werkzeug.utils import secure_filename
 from PIL import Image
 
+# Load environment variables early (e.g. from .env)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from model_service import predict_anemia_sample, CLASSES, ANEMIA_INFO
 from pdf import generate_pdf_report
 
 app = Flask(__name__, static_folder='static')
 
-UPLOAD_FOLDER = 'uploads'
-REPORTS_FOLDER = 'reports'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+REPORTS_FOLDER = os.path.join(BASE_DIR, 'reports')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'jfif', 'tiff', 'tif', 'bmp', 'webp'}
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -74,21 +82,20 @@ def predict():
             warning = "Corrupted or unreadable image file. Please provide a valid microscope smear image."
             return render_template('index.html', warning=warning)
 
-        # Run AI prediction using fine‑tuned model – protect against image loading errors
+        # Run AI prediction using Roboflow Hosted Inference API
         try:
             prediction_result = predict_anemia_sample(
                 img_path_or_pil=filepath,
                 hemoglobin=hemoglobin,
                 mcv=mcv,
                 rbc_count=rbc_count,
-                mch=mch,
-                h5_path='M_Anemia_finetuned.h5'
+                mch=mch
             )
         except Exception as e:
-            # Remove the uploaded file to avoid clutter
+            # Remove uploaded file to avoid clutter
             if os.path.exists(filepath):
                 os.remove(filepath)
-            warning = f"Processing error: {e}. Ensure the uploaded file is a valid image."
+            warning = f"{e}"
             return render_template('index.html', warning=warning)
 
         predicted_class = prediction_result['predicted_class']
@@ -98,6 +105,15 @@ def predict():
         morphology = prediction_result['morphology']
         recommendations = prediction_result['recommendations']
         cbc_notes = prediction_result['cbc_corroboration']
+
+        # Determine display image: if detections with bounding boxes were drawn, display annotated version
+        original_image_url = url_for('uploaded_file', filename=unique_filename)
+        annotated_path = prediction_result.get('annotated_image_path')
+        if annotated_path and os.path.exists(annotated_path):
+            annotated_filename = os.path.basename(annotated_path)
+            display_image_url = url_for('uploaded_file', filename=annotated_filename)
+        else:
+            display_image_url = original_image_url
 
         # Generate PDF lab report
         pdf_path = generate_pdf_report(
@@ -115,7 +131,6 @@ def predict():
             morphology=morphology
         )
         pdf_filename = os.path.basename(pdf_path)
-        image_url = url_for('uploaded_file', filename=unique_filename)
 
         # Check if request was JSON/Fetch
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
@@ -127,9 +142,13 @@ def predict():
                 'allProbabilities': all_probs,
                 'morphology': morphology,
                 'recommendations': recommendations,
-                'imageUrl': image_url,
+                'imageUrl': display_image_url,
+                'originalImageUrl': original_image_url,
                 'pdfFilename': pdf_filename,
-                'cbcNotes': cbc_notes
+                'cbcNotes': cbc_notes,
+                'detections': prediction_result.get('detections', []),
+                'totalDetections': prediction_result.get('total_detections', 0),
+                'detectionCounts': prediction_result.get('detection_counts', {})
             })
 
         # Render complete website with results
@@ -139,10 +158,14 @@ def predict():
             probability=confidence_str,
             all_probabilities=all_probs,
             pdf_filename=pdf_filename,
-            uploaded_image_url=image_url,
+            uploaded_image_url=display_image_url,
+            original_image_url=original_image_url,
             morphology=morphology,
             recommendations=recommendations,
             cbc_corroboration=cbc_notes,
+            detections=prediction_result.get('detections', []),
+            total_detections=prediction_result.get('total_detections', 0),
+            detection_counts=prediction_result.get('detection_counts', {}),
             patient_name=name,
             age=age,
             gender=gender,

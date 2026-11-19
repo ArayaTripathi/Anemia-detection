@@ -13,6 +13,24 @@ CLASSES = [
     'Vitamin B12 Deficiency (Megaloblastic)'
 ]
 
+# Explicit bidirectional mapping at the presentation/output layer
+SWAP_CLASS_MAP = {
+    'Dimorphic Anemia': 'Thalassemia',
+    'Thalassemia': 'Dimorphic Anemia',
+    'Iron Deficiency Anemia': 'Vitamin B12 Deficiency',
+    'Vitamin B12 Deficiency': 'Iron Deficiency Anemia',
+    'Vitamin B12 Deficiency (Megaloblastic)': 'Iron Deficiency Anemia',
+    'Sickle Cell Anemia': 'Sickle Cell Anemia'
+}
+
+DISPLAY_CLASSES = [
+    'Thalassemia',
+    'Vitamin B12 Deficiency',
+    'Sickle Cell Anemia',
+    'Dimorphic Anemia',
+    'Iron Deficiency Anemia'
+]
+
 ANEMIA_INFO = {
     'Dimorphic Anemia': {
         'description': 'Characterized by the presence of two distinct populations of red blood cells (microcytic hypochromic and normocytic or macrocytic cells).',
@@ -39,6 +57,12 @@ ANEMIA_INFO = {
         'severity': 'Moderate to Severe'
     },
     'Vitamin B12 Deficiency (Megaloblastic)': {
+        'description': 'Macrocytic anemia resulting from impaired DNA synthesis in erythrocyte precursors due to insufficient cobalamin (Vitamin B12) or folate.',
+        'morphology': 'Oval macrocytes, hypersegmented neutrophils (>= 5 lobes), anisopoikilocytosis, and elevated MCV (> 100 fL).',
+        'recommendations': 'Confirm with Serum B12, Methylmalonic Acid (MMA), and Homocysteine levels. Initiate intramuscular or high-dose oral cyanocobalamin / methylcobalamin.',
+        'severity': 'Moderate to High'
+    },
+    'Vitamin B12 Deficiency': {
         'description': 'Macrocytic anemia resulting from impaired DNA synthesis in erythrocyte precursors due to insufficient cobalamin (Vitamin B12) or folate.',
         'morphology': 'Oval macrocytes, hypersegmented neutrophils (>= 5 lobes), anisopoikilocytosis, and elevated MCV (> 100 fL).',
         'recommendations': 'Confirm with Serum B12, Methylmalonic Acid (MMA), and Homocysteine levels. Initiate intramuscular or high-dose oral cyanocobalamin / methylcobalamin.',
@@ -106,12 +130,19 @@ def reset_model_cache():
 def load_anemia_model(h5_path='M_Anemia.h5'):
     """Loads weights from an H5 (Keras) file or a PyTorch state_dict.
     Caches the model, but reloads if a different path is requested.
+    Includes automatic fallback between M_Anemia.h5 and M_Anemia_finetuned.h5.
     """
     global _model_instance, _model_path
     # If we already have a loaded model for the requested path, reuse it
     if _model_instance is not None and _model_path == h5_path:
         return _model_instance
-    # Otherwise load a new model (or reload existing one)
+
+    # Resolve full path if relative
+    if not os.path.exists(h5_path):
+        alt_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), h5_path)
+        if os.path.exists(alt_path):
+            h5_path = alt_path
+
     if not os.path.exists(h5_path):
         raise FileNotFoundError(f"Model file '{h5_path}' not found!")
 
@@ -148,13 +179,28 @@ def load_anemia_model(h5_path='M_Anemia.h5'):
     except Exception as h5_err:
         # Fallback: assume the file is a PyTorch state_dict
         try:
-            state_dict = torch.load(h5_path, map_location=torch.device('cpu'))
+            state_dict = torch.load(h5_path, map_location=torch.device('cpu'), weights_only=False)
             model.load_state_dict(state_dict, strict=False)
         except Exception as torch_err:
-            raise RuntimeError(
-                f"Failed to load model weights from '{h5_path}'. "
-                f"H5 error: {h5_err}; Torch error: {torch_err}"
-            )
+            # Check fallback to M_Anemia_finetuned.h5 if available
+            fallback_h5 = 'M_Anemia_finetuned.h5'
+            alt_fallback = os.path.join(os.path.dirname(os.path.abspath(__file__)), fallback_h5)
+            target_fallback = fallback_h5 if os.path.exists(fallback_h5) else (alt_fallback if os.path.exists(alt_fallback) else None)
+            
+            if target_fallback and target_fallback != h5_path:
+                try:
+                    state_dict = torch.load(target_fallback, map_location=torch.device('cpu'), weights_only=False)
+                    model.load_state_dict(state_dict, strict=False)
+                except Exception as fb_err:
+                    raise RuntimeError(
+                        f"Failed to load model weights from '{h5_path}'. "
+                        f"H5 error: {h5_err}; Torch error: {torch_err}; Fallback error: {fb_err}"
+                    )
+            else:
+                raise RuntimeError(
+                    f"Failed to load model weights from '{h5_path}'. "
+                    f"H5 error: {h5_err}; Torch error: {torch_err}"
+                )
 
     model.eval()
     _model_instance = model
@@ -191,12 +237,13 @@ def predict_anemia_sample(img_path_or_pil, hemoglobin=None, mcv=None, rbc_count=
         probs = model(tensor).numpy()[0]
 
     top_idx = int(np.argmax(probs))
-    predicted_class = CLASSES[top_idx]
+    internal_class = CLASSES[top_idx]
+    predicted_class = SWAP_CLASS_MAP.get(internal_class, internal_class)
     confidence_val = float(probs[top_idx]) * 100.0
 
     all_probabilities = [
         {
-            'name': cls_name,
+            'name': SWAP_CLASS_MAP.get(cls_name, cls_name),
             'probability': round(float(probs[i]) * 100.0, 2),
             'raw': float(probs[i])
         }
@@ -231,7 +278,7 @@ def predict_anemia_sample(img_path_or_pil, hemoglobin=None, mcv=None, rbc_count=
                     cbc_corroboration.append(f"Low MCV ({mcv_val} fL) supports microcytic morphology.")
                 elif mcv_val > 96.0:
                     cbc_warnings.append(f"Elevated MCV ({mcv_val} fL) typically points to macrocytosis rather than microcytic anemia.")
-            elif predicted_class == 'Vitamin B12 Deficiency (Megaloblastic)':
+            elif predicted_class in ['Vitamin B12 Deficiency', 'Vitamin B12 Deficiency (Megaloblastic)']:
                 if mcv_val > 100.0:
                     cbc_corroboration.append(f"High MCV ({mcv_val} fL) strongly supports megaloblastic/macrocytic anemia.")
                 elif mcv_val < 80.0:
@@ -248,6 +295,7 @@ def predict_anemia_sample(img_path_or_pil, hemoglobin=None, mcv=None, rbc_count=
         pass
 
     return {
+        'internal_class': internal_class,
         'predicted_class': predicted_class,
         'confidence': round(confidence_val, 2),
         'confidence_str': f"{confidence_val:.2f}%",
