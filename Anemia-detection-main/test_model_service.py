@@ -57,9 +57,9 @@ class TestModelService(unittest.TestCase):
         self.assertIn('cbc_corroboration', res)
 
     def test_bidirectional_class_name_swaps(self):
-        """Verify the exact bidirectional class name swap requirements:
-        1. Dimorphic Anemia <-> Thalassemia
-        2. Vitamin B12 Deficiency <-> Iron Deficiency Anemia
+        """Verify the exact presentation layer mapping requirements:
+        1. Dimorphic Anemia <-> Thalassemia swapped
+        2. Iron Deficiency Anemia & Vitamin B12 Deficiency mapped to respective names
         3. Sickle Cell Anemia remains unchanged
         """
         mapping = model_service.SWAP_CLASS_MAP
@@ -67,11 +67,11 @@ class TestModelService(unittest.TestCase):
         self.assertEqual(mapping['Dimorphic Anemia'], 'Thalassemia')
         # 2. Thalassemia -> Dimorphic Anemia
         self.assertEqual(mapping['Thalassemia'], 'Dimorphic Anemia')
-        # 3. Vitamin B12 Deficiency -> Iron Deficiency Anemia
-        self.assertEqual(mapping['Vitamin B12 Deficiency'], 'Iron Deficiency Anemia')
-        self.assertEqual(mapping['Vitamin B12 Deficiency (Megaloblastic)'], 'Iron Deficiency Anemia')
-        # 4. Iron Deficiency Anemia -> Vitamin B12 Deficiency
-        self.assertEqual(mapping['Iron Deficiency Anemia'], 'Vitamin B12 Deficiency')
+        # 3. Vitamin B12 Deficiency -> Vitamin B12 Deficiency
+        self.assertEqual(mapping['Vitamin B12 Deficiency'], 'Vitamin B12 Deficiency')
+        self.assertEqual(mapping['Vitamin B12 Deficiency (Megaloblastic)'], 'Vitamin B12 Deficiency')
+        # 4. Iron Deficiency Anemia -> Iron Deficiency Anemia
+        self.assertEqual(mapping['Iron Deficiency Anemia'], 'Iron Deficiency Anemia')
         # 5. Sickle Cell Anemia remains unchanged
         self.assertEqual(mapping['Sickle Cell Anemia'], 'Sickle Cell Anemia')
 

@@ -61,26 +61,26 @@ class TestClassSwaps(unittest.TestCase):
             self.assertEqual(res['all_probabilities'][0]['name'], 'Dimorphic Anemia')
             self.assertAlmostEqual(res['all_probabilities'][0]['probability'], 90.0, places=1)
 
-    def test_swap_3_vitamin_b12_to_iron_deficiency(self):
-        """If model internally predicts Vitamin B12 Deficiency (index 4), display Iron Deficiency Anemia."""
+    def test_swap_3_vitamin_b12_maps_to_vitamin_b12(self):
+        """If model internally predicts Vitamin B12 Deficiency (index 4), display Vitamin B12 Deficiency."""
         fake_probs = torch.tensor([[0.01, 0.02, 0.03, 0.04, 0.90]])
         with patch.object(model_service.AnemiaVGGModel, 'forward', return_value=fake_probs):
             res = model_service.predict_anemia_sample(self.test_img)
             self.assertEqual(res['internal_class'], 'Vitamin B12 Deficiency (Megaloblastic)')
-            self.assertEqual(res['predicted_class'], 'Iron Deficiency Anemia')
+            self.assertEqual(res['predicted_class'], 'Vitamin B12 Deficiency')
             self.assertAlmostEqual(res['confidence'], 90.0, places=1)
-            self.assertEqual(res['all_probabilities'][0]['name'], 'Iron Deficiency Anemia')
+            self.assertEqual(res['all_probabilities'][0]['name'], 'Vitamin B12 Deficiency')
             self.assertAlmostEqual(res['all_probabilities'][0]['probability'], 90.0, places=1)
 
-    def test_swap_4_iron_deficiency_to_vitamin_b12(self):
-        """If model internally predicts Iron Deficiency Anemia (index 1), display Vitamin B12 Deficiency."""
+    def test_swap_4_iron_deficiency_maps_to_iron_deficiency(self):
+        """If model internally predicts Iron Deficiency Anemia (index 1), display Iron Deficiency Anemia."""
         fake_probs = torch.tensor([[0.02, 0.88, 0.03, 0.03, 0.04]])
         with patch.object(model_service.AnemiaVGGModel, 'forward', return_value=fake_probs):
             res = model_service.predict_anemia_sample(self.test_img)
             self.assertEqual(res['internal_class'], 'Iron Deficiency Anemia')
-            self.assertEqual(res['predicted_class'], 'Vitamin B12 Deficiency')
+            self.assertEqual(res['predicted_class'], 'Iron Deficiency Anemia')
             self.assertAlmostEqual(res['confidence'], 88.0, places=1)
-            self.assertEqual(res['all_probabilities'][0]['name'], 'Vitamin B12 Deficiency')
+            self.assertEqual(res['all_probabilities'][0]['name'], 'Iron Deficiency Anemia')
             self.assertAlmostEqual(res['all_probabilities'][0]['probability'], 88.0, places=1)
 
     def test_sickle_cell_unchanged(self):
@@ -94,7 +94,7 @@ class TestClassSwaps(unittest.TestCase):
             self.assertEqual(res['all_probabilities'][0]['name'], 'Sickle Cell Anemia')
 
     def test_api_json_and_html_rendering(self):
-        """Verify Flask /predict API returns swapped class names in JSON & HTML."""
+        """Verify Flask /predict API returns proper class names in JSON & HTML."""
         fake_probs = torch.tensor([[0.02, 0.85, 0.03, 0.05, 0.05]])  # Internal Iron Deficiency
         with patch.object(model_service.AnemiaVGGModel, 'forward', return_value=fake_probs):
             # JSON request
@@ -102,8 +102,8 @@ class TestClassSwaps(unittest.TestCase):
                 resp = self.client.post('/predict', data={'image': (f, 'test.jpg')}, headers={'X-Requested-With': 'XMLHttpRequest'})
             self.assertEqual(resp.status_code, 200)
             data = resp.get_json()
-            self.assertEqual(data['anemiaType'], 'Vitamin B12 Deficiency')
-            self.assertEqual(data['allProbabilities'][0]['name'], 'Vitamin B12 Deficiency')
+            self.assertEqual(data['anemiaType'], 'Iron Deficiency Anemia')
+            self.assertEqual(data['allProbabilities'][0]['name'], 'Iron Deficiency Anemia')
 
 
 if __name__ == '__main__':

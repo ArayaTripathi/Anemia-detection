@@ -13,22 +13,25 @@ CLASSES = [
     'Vitamin B12 Deficiency (Megaloblastic)'
 ]
 
-# Explicit bidirectional mapping at the presentation/output layer
+# Explicit presentation/output mapping:
+# - Dimorphic Anemia <-> Thalassemia swapped
+# - Iron Deficiency Anemia & Vitamin B12 Deficiency mapped to their respective classes
+# - Sickle Cell Anemia unchanged
 SWAP_CLASS_MAP = {
     'Dimorphic Anemia': 'Thalassemia',
     'Thalassemia': 'Dimorphic Anemia',
-    'Iron Deficiency Anemia': 'Vitamin B12 Deficiency',
-    'Vitamin B12 Deficiency': 'Iron Deficiency Anemia',
-    'Vitamin B12 Deficiency (Megaloblastic)': 'Iron Deficiency Anemia',
+    'Iron Deficiency Anemia': 'Iron Deficiency Anemia',
+    'Vitamin B12 Deficiency': 'Vitamin B12 Deficiency',
+    'Vitamin B12 Deficiency (Megaloblastic)': 'Vitamin B12 Deficiency',
     'Sickle Cell Anemia': 'Sickle Cell Anemia'
 }
 
 DISPLAY_CLASSES = [
     'Thalassemia',
-    'Vitamin B12 Deficiency',
+    'Iron Deficiency Anemia',
     'Sickle Cell Anemia',
     'Dimorphic Anemia',
-    'Iron Deficiency Anemia'
+    'Vitamin B12 Deficiency'
 ]
 
 ANEMIA_INFO = {
