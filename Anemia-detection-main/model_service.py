@@ -130,7 +130,7 @@ def reset_model_cache():
     _model_path = None
 
 
-def load_anemia_model(h5_path='M_Anemia.h5'):
+def load_anemia_model(h5_path='M_Anemia_finetuned.h5'):
     """Loads weights from an H5 (Keras) file or a PyTorch state_dict.
     Caches the model, but reloads if a different path is requested.
     Includes automatic fallback between M_Anemia.h5 and M_Anemia_finetuned.h5.
@@ -228,7 +228,7 @@ def preprocess_image_tensor(img_path_or_pil):
     return tensor
 
 
-def predict_anemia_sample(img_path_or_pil, hemoglobin=None, mcv=None, rbc_count=None, mch=None, h5_path='M_Anemia.h5'):
+def predict_anemia_sample(img_path_or_pil, hemoglobin=None, mcv=None, rbc_count=None, mch=None, h5_path='M_Anemia_finetuned.h5'):
     """
     Runs model prediction on image and contextualizes with CBC indices.
     Returns comprehensive diagnostic dictionary.
