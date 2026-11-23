@@ -18,6 +18,7 @@ ENV/
 
 # Model Files (Obsolete local weights)
 *.h5
+!M_Anemia_finetuned.h5
 *.hdf5
 
 # Uploads & Reports
